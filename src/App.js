@@ -5,7 +5,7 @@ import Login from './components/Login/Login';
 
 function App() {
   return (
-    <HashRouter>
+    <HashRouter basename="/">
       <Route path="/" exact component={Auth} />
       <Route path="/login" component={Login} />
     </HashRouter>
