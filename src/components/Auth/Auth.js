@@ -1,32 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-// import Cookies from 'js-cookie';
 
-export default () => {
-  const [auth, setAuth] = useState(false)
-  // const [cookie, setCookie] = useState()
+export default (props) => {
+  const [auth, setAuth] = useState(null)
 
   useEffect(() => {
-    fetch('https://stage.attainr.io/attainr-core/auth/authentication/api/public/authentication', {
+    fetch('auth/authentication/api/public/authentication', {
       method: 'GET',
+      withCredentials: true,
       credentials: 'same-origin'
     })
       .then(response => response.json())
       .then(data => {
-        setAuth(data)
+        if (data) {
+          sessionStorage.setItem('loggedIn', true)
+          if (sessionStorage.getItem('loggedIn', true)) {
+            setAuth(true)
+          } else {
+            setAuth(false)
+          }
+        } else {
+          setAuth(false)
+        }
       })
   }, [])
 
-  // console.log(cookie)
-
-  if (auth) {
-    return <Redirect to='/login' />
-  }
-  return (
-    <div className="d-flex flex-grow-1 justify-content-center align-items-center vh-100">
-      <div className="spinner-border" role="status">
-        <span className="sr-only">Loading...</span>
+  if (auth === true || auth === false) {
+    if (auth === false) {
+      return <Redirect to="/login" />
+    } else {
+      return props.children
+    }
+  } else {
+    return (
+      <div className="d-flex flex-grow-1 justify-content-center align-items-center vh-100">
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 }
